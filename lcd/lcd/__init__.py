@@ -16,7 +16,7 @@
 
 
 from .lcd_panel import LCDPanel
-from gi.repository import GObject, Gtk, Peas, PeasGtk, Pluma
+from gi.repository import GObject, Gtk, Peas, PeasGtk 
 
 
 class LcdPlugin(GObject.Object, Peas.Activatable):
