@@ -14,7 +14,7 @@ class LCDPanel(Gtk.TextView):
         self.set_hexpand(False)
         self.set_hexpand(False)
         self.set_buffer(self._driver.get_buffer())
-        self.set_size_request(400, 240)
+        self.set_size_request(300, 140)
         font_desc = Pango.FontDescription(LCDPanel.DEFAULT_FONT)
         # layout = self.get_widget_layout()
         # font_attr = Pango.attr_letter_spacing_new(letter_spacing=8)
