@@ -20,11 +20,10 @@ class LCDPanel(Gtk.Label):
 
     def add_text(self, text):
         self.buffer = self.buffer + text
-        print(self.buffer)
         self.count = self.count + 1
         count = 0
-        if(self.count > 10):
-            count = self.count - 10
+        if(self.count > 16):
+            count = self.count - 16
             print("%d" % count)
         self.set_text(self.buffer[count:])
 

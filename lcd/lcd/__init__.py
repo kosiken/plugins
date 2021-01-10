@@ -53,7 +53,7 @@ class LcdPlugin(GObject.Object, Peas.Activatable):
         s = str(n)
         m = s.upper()
         self.panel.add_text(m)
-        self.panel2.add_text(m)
+        # self.panel2.add_text(m)
 
     def __clear_lcd(self, runner):
         """
