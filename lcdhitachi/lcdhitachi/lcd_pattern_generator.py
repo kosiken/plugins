@@ -169,7 +169,7 @@ class PatternGenerator():
 
                 try:
                         if(index > 92):
-                                print("not in scope")
+                                # print("not in scope")
                                 p = PatternGenerator.char_patterns[93]
                         else:
                                 p = PatternGenerator.char_patterns[index]
@@ -224,7 +224,7 @@ class PatternGenerator():
                 ret=list()
                 try:
                         if(index > 92):
-                                print("not in scope")
+                                # print("not in scope")
                                 p = PatternGenerator.char_patterns[93]
                         else:
                                 p = PatternGenerator.char_patterns[index]
