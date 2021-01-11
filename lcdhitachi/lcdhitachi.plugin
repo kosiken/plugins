@@ -1,0 +1,7 @@
+[Plugin]
+Module=lcdhitachi
+Loader=python3
+Name=Hitachi HD44780U LCD Module
+Description=Inserts a Hitachi HD44780U LCD  screen.
+Authors=Allison Kosy <allisonkosy@gmail.com>
+Copyright=Copyright © 2021 Allison Kosy
