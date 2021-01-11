@@ -17,6 +17,7 @@ class LCDCell(Gtk.Widget):
         self._active_color =Gdk.RGBA(red=0,green=0,blue=0,alpha=0) 
         self.off_color = Gdk.RGBA(red=0.77,green=0.77,blue=0.77,alpha=0) 
         self._value = 93
+        self.set_size_request(40, 40)
         pass
 
 
@@ -29,6 +30,8 @@ class LCDCell(Gtk.Widget):
         if(self._is_active):
             bg_color = self._active_color
             pass
+        cr.set_source_rgba(*list(bg_color))
+    
 
         pass
     
