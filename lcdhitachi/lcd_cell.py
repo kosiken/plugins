@@ -167,7 +167,7 @@ class LCDDriver(GObject.Object):
         self.ren = 0
         self.recieved = 0
         self.mode = mode
-        self._shift = 0
+        self._shift = False
         self._buffer_recieved = 0
         self.busy_flag = False
         self.cells = []
@@ -177,7 +177,7 @@ class LCDDriver(GObject.Object):
         self._last_cursor = 0
         self._entry_incr = 1
         self._current_row = 1
-
+        self.index = 0
         self._cursor_on = False
         self._display_on = False
         self._blink = False
@@ -185,6 +185,8 @@ class LCDDriver(GObject.Object):
         self._mem_addr_pointer = 0
         self._cg_addr_pointer = 0
         self.memory = []
+        self._cg_ram_ptr = 0
+        self.n_dl = 2
         
         for i in range(0,32):
             self.cells.append(LCDCell()) 
@@ -250,6 +252,15 @@ class LCDDriver(GObject.Object):
         """
         print("cld")
         time.sleep(LCDDriver.CLEAR_DISP_TIME)
+        for i in range(0,80):
+            self.memory[i] = 0
+            pass
+        self._cursor_position=0
+        self._mem_addr_pointer=0
+        self.index=0
+        self._current_row=0
+
+
         pass
 
     def return_home(self, param=2):
@@ -257,6 +268,9 @@ class LCDDriver(GObject.Object):
         docstring
         """
         time.sleep(LCDDriver.RETURN_HOME)
+        self._mem_addr_pointer = 0
+        self.index=0
+
         print("r_h")
         pass
     def entry_mode_set(self, param=4):
@@ -265,7 +279,7 @@ class LCDDriver(GObject.Object):
         """
         s= param&1
         i_d = LCDDriver.get_bit(param,1)
-        self._shift = s
+        self._shift = s == 1
         time.sleep(LCDDriver.EMS_TO_SDRAM_ADDR_R_W)
         if(i_d == 1):
             self._entry_incr = 1
@@ -314,7 +328,8 @@ class LCDDriver(GObject.Object):
         n = LCDDriver.get_bit(param,3) 
         d_l = LCDDriver.get_bit(param,4)
         self.mode = (d_l * 4)+4
-
+        if(d_l==0):
+            self.rows = 1
         print(param)
         pass
 
@@ -335,6 +350,19 @@ class LCDDriver(GObject.Object):
 
         addr = param & 0b1111111
         self._mem_addr_pointer = addr
+       
+        for cell in self.cells:
+            cell.set_cursor(False,False)
+        if(addr < 0x28):
+            self._current_row = 1
+            self._cursor_position = (param - 0x80) & 0xf
+        else:
+            self._current_row = 2
+            self._cursor_position = (param - 0xc0) & 0xf
+        if(self._shift):
+            self._cursor_position = self._last_cursor
+        self.update_cells()
+        self._last_cursor = self._cursor_position
         pass
     def read_bf(self):
         """
@@ -342,36 +370,120 @@ class LCDDriver(GObject.Object):
         """
         return self.busy_flag
 
+    def get_val(self, start, stop):
+        v=0
+        end = 39
+        if(start > 0x39):
+            v = 40
+            end = 79
+        return self.memory[v:end]
+
+    def shift_disp(self):
+        """
+        docstring
+        """
+        arr= self.get_val(0,0x27)
+        off1 = 0
+        off2 = self._mem_addr_pointer
+        if(self._mem_addr_pointer > 0x40):
+            off2 = self._mem_addr_pointer - 0x40
+        arr = self.get_val(0,0x27)
+        arr = arr[off1:off2]
+        li = len(arr)
+        mo=li - 16
+        if(mo<0):
+            mo =0
+        arr = arr[mo:]
+        index = 0
+        for val in arr:
+            cell = self.cells[index]
+            cell.cmp_and_set_val(val)
+            index = index+1
+            pass
+        index = 0
+        arr = self.get_val(0x40,0x67)
+        arr = arr[off1:off2]
+        li = len(arr)
+        mo=li - 16
+        if(mo<0):
+            mo =0
+        arr = arr[mo:]
+        index = 0
+        for val in arr:
+            cell = self.cells[index + ((1)*16)]
+            cell.cmp_and_set_val(val)
+            index = index+1
+            pass
+        index = 0
+
+
     def update_cells(self, redraw=True):
         """
         docstring
         """
         s=""
-        print(self._mem_addr_pointer)
+        print(self._mem_addr_pointer, self._current_row)
         # self._page_offset = int(self._mem_addr_pointer/16)
      
         beep =0
+        if(self._shift):
+            return self.shift_disp()
+        start = self._mem_addr_pointer - 1
+
+        offset = 0
+        off1 = 0
+        off2 = self._mem_addr_pointer
         
-        start = self._mem_addr_pointer - 16
-        if(start < 0):
-            start = 0
+        if(self._mem_addr_pointer>63):
+            offset = 0x40
+            off2 = self._mem_addr_pointer - 0x40
+            
+            
+        offset2 = offset + 0x27
+
+        arr = self.get_val(offset,self._mem_addr_pointer)
+
+        arr = arr[off1:off2]
+        li = len(arr)
+        mo=li - 16
+        if(mo<0):
+            mo =0
+        arr = arr[mo:]
+        print(arr, mo,self._mem_addr_pointer)
+        
+
+       
+        l = dict()
+        
+        start = 0
         beep = start + 16    
         index = 0
-        
+        for val in arr:
+            cell = self.cells[index + ((self._current_row - 1)*16)]
+            cell.cmp_and_set_val(val)
+            index = index+1
+            pass
+        index = 0
         for i in range( start,beep):
             if(i>79):
                 break
             # s=s+ chr(self.memory[i])
             # s = s + ' '
-            cell = self.cells[index * self._current_row]
-            if(self._last_cursor== index):
-                cell.set_cursor(False, False)
+            cell = self.cells[index + ((self._current_row - 1)*16)]
+            
+ 
             if(self._cursor_position == index):
+
                 cell.set_cursor(self._cursor_on, self._blink)
-            cell.cmp_and_set_val(self.memory[i])
+            else:
+                cell.set_cursor(False, False)
+           
+            # print(i,' ', self.memory[i])
+            # l[str(i)] = self.memory[i]
             index= index+1
             pass
-        # print(s)
+        # l.reverse()
+        # print(l)
         pass
     def write_data(self, data):
         """
@@ -380,11 +492,18 @@ class LCDDriver(GObject.Object):
         # print("ppp",data)
         # return
         self._last_cursor = self._cursor_position
-        self.memory[self._mem_addr_pointer] = data
+        if(self.index>39):
+            return
+        if(self._current_row == 1):
+            self.memory[self.index] = data
+        else:
+            self.memory[40+self.index] = data
+            pass
         self._mem_addr_pointer = self._entry_incr + self._mem_addr_pointer
+        self.index=self.index + self._entry_incr
         self._cursor_position = self._entry_incr +self._cursor_position
-        if(self._mem_addr_pointer>79):
-            self._mem_addr_pointer>79
+        if(self._mem_addr_pointer>0x67):
+            self._mem_addr_pointer=0x67
         elif (self._mem_addr_pointer < 0):
             self._mem_addr_pointer = 0
             pass
@@ -394,8 +513,9 @@ class LCDDriver(GObject.Object):
             self._cursor_position = 0xf
             
         elif (self._cursor_position >0xf):
-            self._cursor_position = 0
-            
+            self._cursor_position = 0xf
+        if(self._shift):
+            self._cursor_position=self._last_cursor
             pass
         self.update_cells()
         self.rst()
