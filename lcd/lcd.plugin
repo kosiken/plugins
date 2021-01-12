@@ -1,7 +1,0 @@
-[Plugin]
-Module=lcd
-Loader=python3
-Name=LCD Module
-Description=Inserts an lcd screen.
-Authors=Allison Kosy <allisonkosy@gmail.com>
-Copyright=Copyright © 2021 Allison Kosy

@@ -17,8 +17,8 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         GObject.Object.__init__(self)
         
     def do_activate(self):
-        window = self.object
-        # print("added")
+        window = self.object.get_property("v_box")
+        print(repr(window))
         self.panel = LCDWidget()
         self._driver  = LCDDriver(self.panel)
         self.frame = self.panel.get_me()
@@ -37,7 +37,7 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         self.box.add(self.button_box)
         self.box.show_all()
         window.add(self.box)
-        win = window.get_property("runner")
+        win = self.object.get_property("runner")
         button.connect("clicked", self.cls)
         win.connect("interrupt", self.__mycb)
 
@@ -59,6 +59,6 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         self.panel.deactivate()
         for btn in self.buttons:
             self.button_box.remove(btn)
-        window = self.object
+        window = self.object.get_property("v_box")
         self.box.remove(self.frame)
         window.remove(self.box)

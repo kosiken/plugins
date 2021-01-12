@@ -1,12 +1,12 @@
 from .lcd_pattern_generator import PatternGenerator
-from gi.repository import  GLib, Gtk, Gdk
+from gi.repository import GLib, Gtk, Gdk
 import gi
 
 gi.require_version('Gtk', '3.0')
 
 
 class LCDCell(Gtk.Image):
-    HEIGHT = (5*8) + 8
+    HEIGHT = (5*8) + 9
     WIDTH = (5*5) + 5
 
     def __init__(self, *args, **kwds):
@@ -22,12 +22,12 @@ class LCDCell(Gtk.Image):
         self._is_active = False
         self._blink_on = False
         self._font = 0
-        self.index=0
+        self.index = 0
         # self.set_vexpand(False)
         # self.set_hexpand(False)
-        self._inactive_color = Gdk.RGBA(red=.70, green=.70, blue=.70, alpha=1)
+        self._inactive_color = Gdk.RGBA(red=.60, green=.60, blue=.60, alpha=1)
         self._active_color = Gdk.RGBA(red=0, green=0, blue=0, alpha=1)
-        self._off_color = Gdk.RGBA(red=0.77, green=0.77, blue=0.77, alpha=1)
+        self._off_color = Gdk.RGBA(red=0.65, green=0.65, blue=0.65, alpha=1)
         self._cursor_color = Gdk.RGBA(red=0.0, green=0, blue=0.77, alpha=1)
         self._value = 93 + 33
         self.set_size_request(LCDCell.WIDTH, LCDCell.HEIGHT)
@@ -92,7 +92,7 @@ class LCDCell(Gtk.Image):
 
                     cr.set_source_rgba(*list(self._off_color))
                     pass
-                cr.rectangle(j * 6, (i+self._font)*6, 5, 5)
+                cr.rectangle(j * 6, ((i+self._font)*6)+1, 5, 5)
                 cr.fill()
                 pass
             pass
@@ -105,14 +105,16 @@ class LCDCell(Gtk.Image):
             # # print("ll")
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (7+self._font)*6, LCDCell.WIDTH, LCDCell.HEIGHT)
+            cr.rectangle(0, (1+(7+self._font)*6),
+                         LCDCell.WIDTH, LCDCell.HEIGHT)
             cr.fill()
 
         elif (self.has_cursor):
             # for j in range(0,5):
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (7+self._font)*6, LCDCell.WIDTH, LCDCell.HEIGHT)
+            cr.rectangle(0, (1+(7+self._font)*6),
+                         LCDCell.WIDTH, LCDCell.HEIGHT)
             cr.fill()
             # pass
 
