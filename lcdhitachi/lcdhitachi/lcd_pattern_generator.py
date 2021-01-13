@@ -60,6 +60,7 @@ class PatternGenerator():
         # 16 8 4 2 1
         
         char_patterns = [
+        "0,0,0,0,0,0,0,0",
         "4,4,4,4,0,0,4,0",  # !
         "10,10,10,0,0,0,0,0", # "
         "10,10,31,10,31,10,10", # #
@@ -168,7 +169,7 @@ class PatternGenerator():
                 ret=''
 
                 try:
-                        if(index > 92):
+                        if(index > 93):
                                 # # print("not in scope")
                                 p = PatternGenerator.char_patterns[93]
                         else:
@@ -246,5 +247,19 @@ class PatternGenerator():
                         ret.append([0,0,0,0])
                 return ret      
 
+        @staticmethod
+        def render_from_data(arr):
+                """
+                docstring
+                """
+                ret = []
+                for byte in arr:
+                        m_arr = get_drawn_pos(byte)
+                        ret.append(m_arr)                        
 
+
+                while (len(ret) < 7):
+                        ret.append([0,0,0,0])
+                return ret 
+                pass
 

@@ -23,13 +23,14 @@ class LCDCell(Gtk.Image):
         self._blink_on = False
         self._font = 0
         self.index = 0
+        self._matrix = []
         # self.set_vexpand(False)
         # self.set_hexpand(False)
         self._inactive_color = Gdk.RGBA(red=.60, green=.60, blue=.60, alpha=1)
         self._active_color = Gdk.RGBA(red=0, green=0, blue=0, alpha=1)
         self._off_color = Gdk.RGBA(red=0.65, green=0.65, blue=0.65, alpha=1)
         self._cursor_color = Gdk.RGBA(red=0.0, green=0, blue=0.77, alpha=1)
-        self._value = 93 + 33
+        self._value =  32
         self.set_size_request(LCDCell.WIDTH, LCDCell.HEIGHT)
 
         pass
@@ -55,9 +56,18 @@ class LCDCell(Gtk.Image):
 
     def cmp_and_set_val(self, value) -> bool:
         v = value
+        prev = self._matrix
+        force=False
+        if(len(prev)> 1):
+            self._matrix =[]
+            force = True
+            
+
+
+        self._matrix =[]
         if(value == 0):
-            v = 93 + 33
-        if(self._value == v):
+            v = 93 + 32
+        if(self._value == v and not force):
             return False
         self.set_value(v)
         return True
@@ -76,7 +86,14 @@ class LCDCell(Gtk.Image):
         if(not self._is_active):
             return
         # m_len = len(matrix)
-        matrix = PatternGenerator.render_pattern_to_matrix(self._value - 33)
+        matrix = self._matrix
+        if(len(matrix)>0):
+            matrix = PatternGenerator.render_from_data(matrix)
+        
+        else:
+            matrix =  PatternGenerator.render_pattern_to_matrix(self._value - 32)
+
+        
         m_len = len(matrix)
         for i in range(0, m_len):
             b = len(matrix[i])
@@ -105,7 +122,7 @@ class LCDCell(Gtk.Image):
             # # print("ll")
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (1+(7+self._font)*5),
+            cr.rectangle(0, (1+(7+self._font)*5)+1,
                          LCDCell.WIDTH, 5)
             cr.fill()
 
@@ -113,7 +130,7 @@ class LCDCell(Gtk.Image):
             # for j in range(0,5):
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (1+(7+self._font)*5),
+            cr.rectangle(0, (1+(7+self._font)*5)+1,
                          LCDCell.WIDTH, 5)
             cr.fill()
             # pass
@@ -156,3 +173,10 @@ class LCDCell(Gtk.Image):
 
         self.queue_draw()
         return (self.cursor_blink and self.has_cursor)
+    def set_matrix(self, arr):
+        """
+        docstring
+        """
+        self._matrix = arr
+        pass
+

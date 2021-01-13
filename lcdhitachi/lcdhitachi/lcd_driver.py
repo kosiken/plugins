@@ -25,6 +25,7 @@ class LCDDriver(GObject.Object):
         self.cells = []
         self._instruction_stack = []
         self._page_offset = 0
+        self._reg_to_write = 0
         self._cursor_position = 0
         self._last_cursor = 0
         self._entry_incr = 1
@@ -41,7 +42,7 @@ class LCDDriver(GObject.Object):
         self._cg_addr_pointer = 0
         self.memory = []
         self.cg_mem = []
-        self._cg_ram_ptr = 0
+
         self._font = 5 * 8
         self.rows = 0
         self._function_set = False
@@ -59,15 +60,16 @@ class LCDDriver(GObject.Object):
             cell.index = i
             self.cells.append(cell)
             self.cg_mem.append(0)
-            self.memory.append(0)
+            self.memory.append(32)
             pass
         for i in range(0, (80 - 32)):
             # self.cells.append(LCDCell())
-            self.memory.append(0)
+            self.memory.append(32)
             if(i < (64-32)):
                 self.cg_mem.append(0)
             pass
         self._selected_cell = self.cells[0]
+        print(len(self.cg_mem))
 
     def command_exec(self, param=0):
         # # print(param)
@@ -138,7 +140,7 @@ class LCDDriver(GObject.Object):
         # print("cld")
         # time.sleep(LCDDriver.CLEAR_DISP_TIME)
         for i in range(0, 80):
-            self.memory[i] = 0
+            self.memory[i] =32
             pass
         self._cursor_position2 = 0
         self._cursor_position = 0
@@ -150,7 +152,7 @@ class LCDDriver(GObject.Object):
         self._entry_incr = 1
         
         for cell in self.cells:
-            cell.cmp_and_set_val(0)
+            cell.cmp_and_set_val(32)
             pass
         self._update_cursor()
 
@@ -341,7 +343,8 @@ class LCDDriver(GObject.Object):
         # # time.sleep(LCDDriver.EMS_TO_SDRAM_ADDR_R_W)
 
         addr = param & 0b111111
-        self._cg_addr_pointer = addr
+        self._mem_addr_pointer = addr
+        self._reg_to_write = 1
         pass
 
     def set_ddr_addr(self, param):
@@ -349,7 +352,7 @@ class LCDDriver(GObject.Object):
         docstring
         """
         # time.sleep(LCDDriver.EMS_TO_SDRAM_ADDR_R_W)
-
+        self._reg_to_write = 0
         addr = param & 0b1111111
 
         if((self.rows == 1) and (addr < 0x50)):
@@ -467,7 +470,14 @@ class LCDDriver(GObject.Object):
         index = 0
         for val in arr:
             cell = self.cells[index + ((self._current_row - 1)*16)]
-            cell.cmp_and_set_val(val)
+            if(val < 0xf):
+                the_off = (val&0x7) * 8
+                print(val,self.cg_mem[the_off:(the_off + 8)])
+                the_data = self.cg_mem[the_off:(the_off + 8)]
+                cell.set_matrix(the_data)
+                pass
+            else:
+                cell.cmp_and_set_val(val)
             index = index+1
             pass
         self._update_cursor()
@@ -517,6 +527,20 @@ class LCDDriver(GObject.Object):
             self._mem_addr_pointer = 0x67
             pass
 
+    def write_to_cg_ram(self, value):
+        """
+        docstring
+        """
+        # print(self.cg_mem[0:self._mem_addr_pointer+1])
+        self.cg_mem[self._mem_addr_pointer] = value
+        self._mem_addr_pointer = self._entry_incr + self._mem_addr_pointer
+        if(self._mem_addr_pointer<0):
+            self._mem_addr_pointer = 0
+        elif (self._mem_addr_pointer > 63):
+            self._mem_addr_pointer = 63
+            pass
+        pass
+
     def write_data(self, data):
         """
         docstring
@@ -525,6 +549,14 @@ class LCDDriver(GObject.Object):
         # return
         if(not self._function_set):
             return
+        # print("reg to write", self._reg_to_write)
+
+        if(self._reg_to_write == 1):
+            self.write_to_cg_ram(data)
+            self.rst()
+            return
+
+
         self._last_cursor = self._cursor_position
         index = self.index[self._current_row-1]
 
@@ -535,7 +567,7 @@ class LCDDriver(GObject.Object):
 
             self.memory[index] = data
         else:
-            print(self._shift, self._cursor_position, self.index,self._display_shift)
+            # print(self._shift, self._cursor_position, self.index,self._display_shift)
             self.memory[40 + index] = data
 
         self._mem_addr_pointer = self._entry_incr + self._mem_addr_pointer
@@ -602,9 +634,11 @@ class LCDDriver(GObject.Object):
         """
         docstring
         """
+        print("rc", param1,param2)
         if(self.mode == 4):
             self.recieve4(param1)
         else:
+            # print("err")
             self.recieve8(param1, param2)
         pass
 
@@ -644,10 +678,10 @@ class LCDDriver(GObject.Object):
         self.busy_flag = True
 
         if(self.rs == 1):
-
+            print("cmd")
             self.command_exec(self._buffer_recieved)
         else:
-
+            print("data")
             self.write_data(self._buffer_recieved)
 
         pass
