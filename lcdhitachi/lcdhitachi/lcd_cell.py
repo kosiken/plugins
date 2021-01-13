@@ -6,8 +6,8 @@ gi.require_version('Gtk', '3.0')
 
 
 class LCDCell(Gtk.Image):
-    HEIGHT = (5*8) + 9
-    WIDTH = (5*5) + 5
+    HEIGHT = (5*8) + 2
+    WIDTH = (5*5) + 2
 
     def __init__(self, *args, **kwds):
         """
@@ -92,7 +92,7 @@ class LCDCell(Gtk.Image):
 
                     cr.set_source_rgba(*list(self._off_color))
                     pass
-                cr.rectangle(j * 6, ((i+self._font)*6)+1, 5, 5)
+                cr.rectangle(j * 5, ((i+self._font)*5)+1, 5, 5)
                 cr.fill()
                 pass
             pass
@@ -105,16 +105,16 @@ class LCDCell(Gtk.Image):
             # # print("ll")
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (1+(7+self._font)*6),
-                         LCDCell.WIDTH, LCDCell.HEIGHT)
+            cr.rectangle(0, (1+(7+self._font)*5),
+                         LCDCell.WIDTH, 5)
             cr.fill()
 
         elif (self.has_cursor):
             # for j in range(0,5):
 
             cr.set_source_rgba(*list(blink_color))
-            cr.rectangle(0, (1+(7+self._font)*6),
-                         LCDCell.WIDTH, LCDCell.HEIGHT)
+            cr.rectangle(0, (1+(7+self._font)*5),
+                         LCDCell.WIDTH, 5)
             cr.fill()
             # pass
 

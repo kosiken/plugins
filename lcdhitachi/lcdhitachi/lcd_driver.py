@@ -147,6 +147,7 @@ class LCDDriver(GObject.Object):
         self.index[1] = 0
         self._current_row = 1
         self._display_shift=0
+        self._entry_incr = 1
         
         for cell in self.cells:
             cell.cmp_and_set_val(0)
@@ -172,6 +173,7 @@ class LCDDriver(GObject.Object):
     def entry_mode_set(self, param=4):
         """
         docstring
+        
         """
         s = param & 1
         i_d = LCDDriver.get_bit(param, 1)
@@ -215,30 +217,86 @@ class LCDDriver(GObject.Object):
         v = self._display_shift
         cursor_pos = self._cursor_position
         if(r_l == 0):
-            v = v + 1
+          
+            cursor_pos = cursor_pos + 1
+            v = v+1
             pass
         else:
-            v = v - 1
-        if(v > (39 - 16)):
-            v = 39 - 16
-        elif (v < 0):
-            v = 0
+            cursor_pos = cursor_pos - 1
+            v = v-1
+            if(v<0):
+                v = 0
+            
+ 
         # self._mem_addr_pointer = v
 
         # print(v, self._shift)
-        if(self._shift == False):
-            self._set_cursor(cursor_pos)
-            self._update_cursor()
+
             # # time.sleep(LCDDriver.EMS_TO_SDRAM_ADDR_R_W)
 
+
+
+        if((self._current_row == 1) and cursor_pos>0xf and self.rows == 2):
+            self._current_row = 2
+            cursor_pos = 0
+            
+        elif (self.rows == 2 and cursor_pos < 0):
+            self._current_row = 1
+            cursor_pos = 0xf
+            pass
+        elif (cursor_pos >0xf):
+
+            cursor_pos = 0xf
+            pass
+
+        elif (cursor_pos < 0):
+            cursor_pos = 0
+
+
+            pass
+        
+        if(self._shift == False):
+            self._set_cursor(cursor_pos)
+            self.update_cells()
+            self.set_index_from_addr(True)
         else:
-            # print("ll")
+            max_shift = self.get_max_shift()
             self._display_shift = v
+            if(v > max_shift):
+                self._display_shift = max_shift
+
+            self.set_index_from_addr()
             self.shift_disp()
+
+
 
         self._shift = prev_shift
         pass
 
+    def get_max_shift(self):
+        """
+        docstring
+        """
+        return int(80/(self.rows)) - 16
+        pass
+
+    def set_index_from_addr(self, shift=False):
+        """
+        docstring
+        """
+        if(self.rows == 1 or self._current_row == 2):
+            self.index[0] = self._mem_addr_pointer 
+            
+            
+        else:
+            self.index[1] = self._mem_addr_pointer - 0x40
+        
+        i=self._current_row -1
+        if(shift):
+            self._display_shift = int(self.index[i]/16) 
+
+
+  
     def function_set(self, param):
         """
         docstring
@@ -310,21 +368,26 @@ class LCDDriver(GObject.Object):
             self._current_row = 2
             self._cursor_position = (param - 0xc0) & 0xf
             self.index[1] = addr - 0x40
-            
+        self.resolve_shift()
         if(not self._shift):
-            self.resolve_shift()
+            
             self._cursor_position2 = self._cursor_position
-        self._update_cursor()
+        else:
+            self._cursor_position = self._last_cursor
+        
         self._mem_addr_pointer = addr
         self._last_cursor = self._cursor_position
+        self.update_cells()
         pass
 
     def resolve_shift(self):
         """
         docstring
         """
-        offs = self.index[self._current_row - 1] / 16
-        self._display_shift = int(offs)
+        offs = self.index[self._current_row - 1]  - 16
+        if(offs<0):
+            offs = 0
+        self._display_shift = offs
             # self._display_shift = 
         # if()
     def read_bf(self):

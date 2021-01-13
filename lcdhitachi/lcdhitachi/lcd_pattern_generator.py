@@ -49,7 +49,7 @@ def get_drawn_pos(val=1):
 
 
 
-# print(get_drawn_pos(17))
+# # print(get_drawn_pos(17))
     
 
 
@@ -169,7 +169,7 @@ class PatternGenerator():
 
                 try:
                         if(index > 92):
-                                # print("not in scope")
+                                # # print("not in scope")
                                 p = PatternGenerator.char_patterns[93]
                         else:
                                 p = PatternGenerator.char_patterns[index]
@@ -180,8 +180,8 @@ class PatternGenerator():
                                         ret = ret + ('•')
                                         pass
                                 ret = ret+'\n'
-                        print(ret)                
-                        print(a)
+                        # print(ret)                
+                        # print(a)
                         return
                 
                 
@@ -192,9 +192,9 @@ class PatternGenerator():
                 arr_len = len(arr)
 
                 for i in range(0, arr_len):
-                        # print(i, arr[i])
+                        # # print(i, arr[i])
                         v = int(arr[i])
-                        # print(i, arr[i])
+                        # # print(i, arr[i])
 
                         marr = get_drawn_pos(v)
                         for lion in range(0,5):
@@ -214,7 +214,7 @@ class PatternGenerator():
                         ret = ret + ('•')
                         pass
         
-                print(ret)
+                # print(ret)
         @staticmethod
         def render_pattern_to_matrix(index=0):
                 """
@@ -224,7 +224,7 @@ class PatternGenerator():
                 ret=list()
                 try:
                         if(index > 92):
-                                # print("not in scope")
+                                # # print("not in scope")
                                 p = PatternGenerator.char_patterns[93]
                         else:
                                 p = PatternGenerator.char_patterns[index]
@@ -238,7 +238,7 @@ class PatternGenerator():
                                          
                 arr_len = len(arr)
                 for i in range(0, arr_len):
-                        # print(i, arr[i])
+                        # # print(i, arr[i])
                         v = int(arr[i])
                         m_arr = get_drawn_pos(v)
                         ret.append(m_arr)
