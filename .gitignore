@@ -2,3 +2,4 @@ lcd/lcd/__pycache__
 lcd/lcd/__pycache__/__init__.cpython-38.pyc
 lcd/lcd/__pycache__/lcd_panel.cpython-38.pyc
 lcd/been.py
+**/*.in
