@@ -39,6 +39,8 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         window.add(self.box)
         win = self.object.get_property("runner")
         button.connect("clicked", self.cls)
+        button2.connect("clicked", self.scroll_disp, -1)
+        button3.connect("clicked", self.scroll_disp, 1)
         win.connect("interrupt", self.__mycb)
 
 
@@ -62,3 +64,9 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         window = self.object.get_property("v_box")
         self.box.remove(self.frame)
         window.remove(self.box)
+
+    def scroll_disp(self, button, val):
+        """
+        docstring
+        """
+        self._driver.shift_disp_by_val(val)

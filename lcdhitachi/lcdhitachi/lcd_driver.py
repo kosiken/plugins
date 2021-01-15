@@ -472,7 +472,7 @@ class LCDDriver(GObject.Object):
             cell = self.cells[index + ((self._current_row - 1)*16)]
             if(val < 0xf):
                 the_off = (val&0x7) * 8
-                print(val,self.cg_mem[the_off:(the_off + 8)])
+                # print(val,self.cg_mem[the_off:(the_off + 8)])
                 the_data = self.cg_mem[the_off:(the_off + 8)]
                 cell.set_matrix(the_data)
                 pass
@@ -581,7 +581,7 @@ class LCDDriver(GObject.Object):
             index = 39
 
             pass
-        _display_shift = self._display_shift
+        
         self.index[self._current_row - 1] = index
 
         self._cursor_position2 = self._entry_incr + self._cursor_position2
@@ -589,31 +589,37 @@ class LCDDriver(GObject.Object):
 
         if(self._cursor_position2 < 0):
             self._cursor_position2 = 0
-            _display_shift = _display_shift - 1
-            if (_display_shift < 0):
-                _display_shift = 0
-                pass
+            
+
 
         elif (self._cursor_position2 > 0xf):
 
             self._cursor_position2 = 0xf
+            pass
+        
 
-            _display_shift = _display_shift + 1
-
-            if ((self.rows > 1) and (_display_shift > (39 - 16))):
-                _display_shift = 39 - 16
-
-            elif (_display_shift > (79 - 16)):
-                _display_shift = 39 - 16
-
-                pass
-
+        _display_shift = self._display_shift
         if(self._shift):
+            _display_shift = _display_shift + self._entry_incr
+
             self._cursor_position = self._last_cursor
             pass
         else:
             self._cursor_position = self._cursor_position2
-        self._display_shift = _display_shift
+        
+
+        if (_display_shift < 0):
+                _display_shift = 0
+                pass
+
+
+        if ((self.rows > 1) and (_display_shift > (39 - 16))):
+            _display_shift = 39 - 16
+
+        elif (_display_shift > (79 - 16)):
+            _display_shift = 39 - 16    
+
+        self._display_shift = _display_shift    
         self.update_cells()
         self.rst()
         pass
@@ -634,7 +640,7 @@ class LCDDriver(GObject.Object):
         """
         docstring
         """
-        print("rc", param1,param2)
+        # print("rc", param1,param2)
         if(self.mode == 4):
             self.recieve4(param1)
         else:
@@ -678,10 +684,10 @@ class LCDDriver(GObject.Object):
         self.busy_flag = True
 
         if(self.rs == 1):
-            print("cmd")
+            # print("cmd")
             self.command_exec(self._buffer_recieved)
         else:
-            print("data")
+            # print("data")
             self.write_data(self._buffer_recieved)
 
         pass
@@ -722,4 +728,36 @@ class LCDDriver(GObject.Object):
             cell.set_cursor(False, False)
             # # time.sleep(0.5)
             parent.remove(cell)
+        pass
+
+    def shift_disp_by_val(self, val, shift=True):
+        """
+        docstring
+        """
+        _display_shift = self._display_shift
+        if(shift):
+            _display_shift = _display_shift + val
+
+            # self._cursor_position = self._last_cursor
+            pass
+        else:
+            return
+        
+
+        if (_display_shift < 0):
+                _display_shift = 0
+                pass
+
+
+        if ((self.rows > 1) and (_display_shift > (39 - 16))):
+            _display_shift = 39 - 16
+
+        elif (_display_shift > (79 - 16)):
+            _display_shift = 39 - 16    
+
+        if(_display_shift == self._display_shift):
+            return
+        self._display_shift = _display_shift 
+        self.shift_disp()
+        
         pass
