@@ -3,3 +3,5 @@ plugin_PYTHON =		\
 	__init__.py	\
 	hex_calculator.py
     
+
+-include $(top_srcdir)/git.mk

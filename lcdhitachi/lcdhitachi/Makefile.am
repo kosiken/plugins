@@ -5,3 +5,5 @@ plugin_PYTHON =		\
 	lcd_driver.py \
     lcd_pattern_generator.py \
     lcd_view.py
+
+-include $(top_srcdir)/git.mk
