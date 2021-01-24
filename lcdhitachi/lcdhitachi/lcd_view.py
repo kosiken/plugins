@@ -1,3 +1,21 @@
+#
+# Copyright 2020 KRC
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#  this list of conditions and the following disclaimer in the documentation
+#  and/or other materials provided with the distribution.
+#
+#
+# lcd_view.py
+
+
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Peas,GObject
@@ -32,24 +50,10 @@ class LCDWidget(Gtk.Grid):
         docstring
         """
         return self.frame
-        
-    # def do_activate(self):
-    #     window = self.object
-
-    #     window.add(self.frame)
-    #     win = window.get_property("runner")
-    #     win.connect("interrupt", self.__mycb)
 
 
-    # def __mycb(self, runner, n):
-    #     cmd = int(n)
-    #     # panel = self.panel
-    #     # panel._driver.recieve4(cmd)
-    #     # print("%x"%cmd)
-    #     pass
     def deactivate(self):
-        # self._driver.clear_out(self)
+
         self.box.remove(self)
         self.frame.remove(self.box)
-        # window = self.object#   
-        # window.remove(self.frame) #      m = s.upp l
+

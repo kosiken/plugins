@@ -1,24 +1,52 @@
-from .lcd_pattern_generator import PatternGenerator
-from gi.repository import GLib, Gtk, Gdk
+#
+# Copyright 2020 KRC
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#  this list of conditions and the following disclaimer in the documentation
+#  and/or other materials provided with the distribution.
+#
+#
+# lcd_cell.py
+
+
+
+
 import gi
 
 gi.require_version('Gtk', '3.0')
 
+from .lcd_pattern_generator import PatternGenerator
+from gi.repository import GLib, Gtk, Gdk
+
+
 
 class LCDCell(Gtk.Image):
+    #  We inherit image because the bare GtkBin
+    # was proving to be a pain in the keyboard
+    """
+    Renders a single lcd cell
+
+    """
     HEIGHT = (5*8) + 2
     WIDTH = (5*5) + 2
 
     def __init__(self, *args, **kwds):
         """
-        docstring
+        init
         """
 
         super().__init__(*args, **kwds)
-        # # print('lol')
+        
 
-        self.has_cursor = False
-        self.cursor_blink = False
+        self.has_cursor = False # Whether to show cursor
+
+        self.cursor_blink = False # Whether to blink cursor 
         self._is_active = False
         self._blink_on = False
         self._font = 0

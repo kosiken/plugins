@@ -1,2 +1,2 @@
-DIST_SUBDIRS =	lcdhitachi
-SUBDIRS = lcdhitachi
+DIST_SUBDIRS =	lcdhitachi hexcalculator
+SUBDIRS = lcdhitachi hexcalculator

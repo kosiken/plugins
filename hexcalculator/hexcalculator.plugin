@@ -1,0 +1,9 @@
+[Plugin]
+Module=hexcalculator
+Loader=python3
+Name=Hex Calculator
+Description=Converts numbers from one base to another.
+Icon=accessories-calculator
+Authors=Allison Kosy <allisonkosy@gmail.com>
+Website=https://kosiken.github.io/gtkemu8086-docs/plugins#hexcalculator
+Copyright=Copyright © 2021 KRC
