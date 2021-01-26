@@ -18,8 +18,11 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         
     def do_activate(self):
         window = self.object
-        
-        
+        win = window.get_property("window")
+        self.bottom_box = win.get_bottom_bar()
+        self.label = Gtk.Label(label="LCD (Mode = 4; Port = 199)")
+        self.label.show()
+        self.bottom_box.add(self.label)
         self.panel = LCDWidget()
         self._driver  = LCDDriver(self.panel)
         self.frame = self.panel.get_me()
@@ -37,6 +40,7 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         self.box.add(self.frame)
         self.box.add(self.button_box)
         self.box.show_all()
+        self.box.set_margin_start(6)
         window.attach(self.box, 0,0,1,1)
         win = self.object.get_property("runner")
         button.connect("clicked", self.cls)
@@ -66,6 +70,7 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         window = self.object
         self.box.remove(self.frame)
         window.remove(self.box)
+        self.bottom_box.remove(self.label)
 
     def scroll_disp(self, button, val):
         """

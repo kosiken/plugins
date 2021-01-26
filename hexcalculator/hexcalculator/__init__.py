@@ -30,6 +30,7 @@ class HexCalculatorPlugin(GObject.Object, Peas.Activatable):
         
     def do_activate(self):
         window = self.object
+        
         self.hex_calculator = HexCalculator()
         self.frame = Gtk.Frame(label="Hex Calculator")
         self.frame.add(self.hex_calculator)
@@ -39,5 +40,6 @@ class HexCalculatorPlugin(GObject.Object, Peas.Activatable):
     def do_deactivate(self):
         window = self.object
         window.remove(self.frame)
+
 
 
