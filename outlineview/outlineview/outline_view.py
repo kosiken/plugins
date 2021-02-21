@@ -16,7 +16,7 @@ class OutlineView():
         self.tree_view = Gtk.TreeView(model=self.tree_store)
         self.select = self.tree_view.get_selection()
         self.select.connect("changed", self.on_tree_selection_changed)
-
+        self.buffer.connect("new-line", self.refresh)
         renderer_text = Gtk.CellRendererText()
         renderer_pic = Gtk.CellRendererPixbuf()
 
