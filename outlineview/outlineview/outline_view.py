@@ -28,20 +28,25 @@ class OutlineView():
         self.column.set_cell_data_func(renderer_pic,self.render_pix_buf)
         self.tree_view.append_column(self.column)
 
-        self.button_box = Gtk.ButtonBox.new(Gtk.Orientation.HORIZONTAL)
+        self.button_box = Gtk.ActionBar()
         self.button_refresh = Gtk.Button.new_with_label(label="Refresh")
+        self.button_refresh.set_relief(Gtk.ReliefStyle.NONE)
         self.button_refresh.connect("clicked", self.refresh)
         self.button_box.add(self.button_refresh)
         self.scrollable_treelist = Gtk.ScrolledWindow()
         self.scrollable_treelist.set_vexpand(True)
+        self.scrollable_treelist.set_hexpand(True)
         self.scrollable_treelist.add(self.tree_view)
         grid.attach(self.scrollable_treelist, 0, 0, 3, 10)
         grid.attach_next_to(
-                            self.button_box, self.scrollable_treelist,Gtk.PositionType.BOTTOM, 1, 1)
+                            self.button_box, self.scrollable_treelist,Gtk.PositionType.BOTTOM, 3, 1)
         self.grid = grid
-        self.grid.set_column_homogeneous(True)
-        grid.set_row_spacing(6)
-        # self.grid.set_row_homogeneous(True)
+        # self.grid.set_column_homogeneous(True)
+        self.grid.set_hexpand(True)
+        self.button_box.set_hexpand(True)
+        self.button_box.set_vexpand(False)
+        # grid.set_row_spacing(6)
+        self.grid.set_row_homogeneous(True)
         self.grid.show_all()
 
     def add_labels(self, labels):
