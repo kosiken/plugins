@@ -6,7 +6,6 @@
 /*.orig
 /*.rej
 /*.tab.c
-/*/*/__pycache__
 /*~
 /.*.sw[nop]
 /.dirstamp
@@ -19,5 +18,8 @@
 /Makefile
 /Makefile.in
 /TAGS
+/hexcalculator/hexcalculator/__pycache__
+/lcdhitachi/lcdhitachi/__pycache__
+/outlineview/outlineview/__pycache__
 /so_locations
 /tags

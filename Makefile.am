@@ -1,4 +1,4 @@
-DIST_SUBDIRS =	lcdhitachi hexcalculator
+DIST_SUBDIRS =	lcdhitachi hexcalculator outlineview
 SUBDIRS = lcdhitachi hexcalculator outlineview
 
 
