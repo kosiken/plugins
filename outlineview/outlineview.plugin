@@ -1,0 +1,9 @@
+[Plugin]
+Module=outlineview
+Loader=python3
+Name=Outline View
+Description=Inserts an outline of the code.
+Icon=emu8086-subroutine
+Authors=Allison Kosy <allisonkosy@gmail.com>
+Website=https://kosiken.github.io/gtkemu8086-docs/plugins#outlineview
+Copyright=Copyright © 2021 KRC
