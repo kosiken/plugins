@@ -1,5 +1,5 @@
 DIST_SUBDIRS =	lcdhitachi hexcalculator
-SUBDIRS = lcdhitachi hexcalculator
+SUBDIRS = lcdhitachi hexcalculator outlineview
 
 
 GITIGNOREFILES = */*/__pycache__

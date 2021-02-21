@@ -32,8 +32,9 @@ class HexCalculatorPlugin(GObject.Object, Peas.Activatable):
         window = self.object
         
         self.hex_calculator = HexCalculator()
-        self.frame = Gtk.Frame(label="Hex Calculator")
+        self.frame = Gtk.Expander(label="Hex Calculator")
         self.frame.add(self.hex_calculator)
+        
         window.attach(self.frame, 0,1,1,1)
         self.frame.show_all()
 

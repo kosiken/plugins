@@ -576,4 +576,4 @@ def extract_label(string):
     return labels
 
 
-print(extract_label(k))
+# print(extract_label(k))

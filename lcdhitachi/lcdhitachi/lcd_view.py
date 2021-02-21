@@ -34,13 +34,13 @@ class LCDWidget(Gtk.Grid):
 
         self.set_column_spacing(4)
         
-        self.frame = Gtk.Frame(label="LCD")
+        
         self.box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 10)
         self.box.set_margin_start(10)
         self.box.set_margin_end(10)
         self.box.add(self)
-        self.frame.add(self.box)
-        self.show_all()
+       
+        
         self.box.show_all()
         
         pass
@@ -49,11 +49,10 @@ class LCDWidget(Gtk.Grid):
         """
         docstring
         """
-        return self.frame
+        return self.box
 
 
     def deactivate(self):
 
         self.box.remove(self)
-        self.frame.remove(self.box)
-
+       

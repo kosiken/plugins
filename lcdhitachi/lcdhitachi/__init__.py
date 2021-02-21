@@ -25,8 +25,9 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         self.bottom_box.add(self.label)
         self.panel = LCDWidget()
         self._driver  = LCDDriver(self.panel)
-        self.frame = self.panel.get_me()
-        self.frame.show_all()
+        self.mbox = self.panel.get_me()
+        self.frame = Gtk.Expander(label="LCD")
+        
         self.box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 10)
         self.button_box = Gtk.ButtonBox.new(Gtk.Orientation.HORIZONTAL)
         button = Gtk.Button.new_with_label(label="Clear LCD")
@@ -37,11 +38,13 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
             self.button_box.add(btn)
             pass
 
-        self.box.add(self.frame)
+        self.box.add(self.mbox)
         self.box.add(self.button_box)
-        self.box.show_all()
+        
         self.box.set_margin_start(6)
-        window.attach(self.box, 0,0,1,1)
+        self.frame.add(self.box)
+        self.frame.show_all()
+        window.attach(self.frame, 0,0,1,1)
         win = self.object.get_property("runner")
         button.connect("clicked", self.cls)
         button2.connect("clicked", self.scroll_disp, -1)
@@ -68,8 +71,8 @@ class LcdHitachiPlugin(GObject.Object, Peas.Activatable):
         for btn in self.buttons:
             self.button_box.remove(btn)
         window = self.object
-        self.box.remove(self.frame)
-        window.remove(self.box)
+        self.box.remove(self.mbox)
+        window.remove(self.frame)
         self.bottom_box.remove(self.label)
 
     def scroll_disp(self, button, val):
